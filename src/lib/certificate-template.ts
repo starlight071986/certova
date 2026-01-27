@@ -3,6 +3,7 @@ interface CertificateData {
   userEmail: string
   courseTitle: string
   courseDescription?: string | null
+  courseNumber?: string | null
   instructorName: string
   completedAt: Date
   certificateNumber: string
@@ -116,21 +117,21 @@ export function generateCertificateHTML(data: CertificateData): string {
     }
 
     .logo {
-      width: 80px;
-      height: 80px;
+      width: 200px;
+      height: 200px;
       object-fit: contain;
     }
 
     .logo-fallback {
-      width: 80px;
-      height: 80px;
+      width: 200px;
+      height: 200px;
       background: linear-gradient(135deg, #0056b3 0%, #003d82 100%);
       border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
-      font-size: 28px;
+      font-size: 70px;
       font-weight: bold;
     }
 
@@ -189,8 +190,16 @@ export function generateCertificateHTML(data: CertificateData): string {
       font-size: 32px;
       font-weight: 600;
       color: #0056b3;
-      margin-bottom: 20px;
+      margin-bottom: 8px;
       line-height: 1.3;
+    }
+
+    .course-number {
+      text-align: center;
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 20px;
+      font-family: monospace;
     }
 
     /* "mit Erfolg teilgenommen" */
@@ -246,14 +255,27 @@ export function generateCertificateHTML(data: CertificateData): string {
       color: #555;
     }
 
-    /* Zertifikatsnummer */
-    .certificate-number {
+    /* Zertifikatsnummer und Footer */
+    .certificate-footer {
       position: absolute;
       bottom: 30px;
       left: 60px;
+      right: 80px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .certificate-number {
       font-size: 10px;
       color: #999;
       letter-spacing: 1px;
+    }
+
+    .powered-by {
+      font-size: 10px;
+      color: #999;
+      text-align: right;
     }
 
     /* Dekoratives Element */
@@ -282,12 +304,8 @@ export function generateCertificateHTML(data: CertificateData): string {
         ${
           data.logoUrl
             ? `<img src="${data.logoUrl}" alt="Logo" class="logo" />`
-            : `<div class="logo-fallback">${(data.siteTitle || 'LH').substring(0, 2).toUpperCase()}</div>`
+            : `<div class="logo-fallback">${(data.siteTitle || 'CV').substring(0, 2).toUpperCase()}</div>`
         }
-        <div class="organization-info">
-          <div class="organization-name">${data.siteTitle || 'Certova'}</div>
-          <div class="organization-subtitle">Learning Management System</div>
-        </div>
       </div>
     </div>
 
@@ -308,6 +326,8 @@ export function generateCertificateHTML(data: CertificateData): string {
     <!-- Kursname -->
     <div class="course-title">${data.courseTitle}</div>
 
+    ${data.courseNumber ? `<div class="course-number">Kursnummer: ${data.courseNumber}</div>` : ''}
+
     <!-- "mit Erfolg teilgenommen" -->
     <div class="success-text">mit Erfolg abgeschlossen.</div>
 
@@ -327,8 +347,11 @@ export function generateCertificateHTML(data: CertificateData): string {
       </div>
     </div>
 
-    <!-- Zertifikatsnummer -->
-    <div class="certificate-number">Zertifikat-Nr.: ${data.certificateNumber}</div>
+    <!-- Zertifikatsnummer und Powered By -->
+    <div class="certificate-footer">
+      <div class="certificate-number">Zertifikat-Nr.: ${data.certificateNumber}</div>
+      <div class="powered-by">powered by certova.de</div>
+    </div>
   </div>
 </body>
 </html>`

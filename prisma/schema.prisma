@@ -283,15 +283,16 @@ model ModuleProgress {
 }
 
 model Lesson {
-  id        String     @id @default(cuid())
-  title     String
-  type      LessonType
-  content   String?
-  videoUrl  String?
-  duration  Int?
-  order     Int
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  id          String     @id @default(cuid())
+  title       String
+  type        LessonType
+  content     String?
+  description String?    // Rich-text description for all lesson types
+  videoUrl    String?
+  duration    Int?
+  order       Int
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 
   moduleId String
   module   Module           @relation(fields: [moduleId], references: [id], onDelete: Cascade)
@@ -422,7 +423,7 @@ model CourseReview {
 model AppSettings {
   id                      String   @id @default("default")
   publicUrl               String?  // Öffentliche URL der Anwendung (z.B. https://ihr-lms.de)
-  courseNumberPrefix      String   @default("LH")  // Prefix für Kursnummern
+  courseNumberPrefix      String   @default("CT")  // Prefix für Kursnummern
   siteTitle               String   @default("Certova")
   logoUrl                 String?  // URL zum hochgeladenen Logo
   faviconUrl              String?  // URL zum hochgeladenen Favicon

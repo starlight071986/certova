@@ -161,7 +161,8 @@ export default function DashboardLayout({
               className="h-8 object-contain flex-shrink-0"
               style={{ maxWidth: sidebarOpen ? '160px' : '32px' }}
             />
-            {sidebarOpen && (
+            {/* Only show site title if no custom logo is uploaded */}
+            {sidebarOpen && !appSettings?.logoUrl && (
               <span className="text-lg font-bold text-primary-900">
                 {appSettings?.siteTitle || 'Certova'}
               </span>

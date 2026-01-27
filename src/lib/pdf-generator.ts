@@ -1,4 +1,6 @@
 import puppeteer from 'puppeteer'
+import { readFileSync } from 'fs'
+import { join } from 'path'
 import { generateCertificateHTML } from './certificate-template'
 import { generateLevelCertificateHTML } from './level-certificate-template'
 
@@ -7,12 +9,53 @@ interface CertificateData {
   userEmail: string
   courseTitle: string
   courseDescription?: string | null
+  courseNumber?: string | null
   instructorName: string
   completedAt: Date
   certificateNumber: string
   organizationName?: string
   logoUrl?: string | null
   siteTitle?: string
+}
+
+/**
+ * Converts a logo file to a base64 data URL for embedding in HTML
+ * @param logoPath Path to the logo file (relative to public directory)
+ * @returns Base64 data URL or null if file doesn't exist
+ */
+function logoToBase64(logoPath: string | null | undefined): string | null {
+  if (!logoPath) return null
+
+  try {
+    // Convert relative public path to absolute filesystem path
+    const publicDir = join(process.cwd(), 'public')
+    const absolutePath = logoPath.startsWith('/')
+      ? join(publicDir, logoPath.substring(1))
+      : join(publicDir, logoPath)
+
+    // Read the file
+    const fileBuffer = readFileSync(absolutePath)
+
+    // Determine MIME type based on file extension
+    const ext = logoPath.toLowerCase().split('.').pop()
+    const mimeTypes: Record<string, string> = {
+      'svg': 'image/svg+xml',
+      'png': 'image/png',
+      'jpg': 'image/jpeg',
+      'jpeg': 'image/jpeg',
+      'gif': 'image/gif',
+      'webp': 'image/webp'
+    }
+
+    const mimeType = mimeTypes[ext || ''] || 'image/png'
+
+    // Convert to base64 data URL
+    const base64 = fileBuffer.toString('base64')
+    return `data:${mimeType};base64,${base64}`
+  } catch (error) {
+    console.error('Error converting logo to base64:', error)
+    return null
+  }
 }
 
 /**
@@ -47,8 +90,14 @@ export async function generateCertificatePDF(data: CertificateData): Promise<Buf
       deviceScaleFactor: 2, // Higher quality
     })
 
-    // Generate HTML content
-    const htmlContent = generateCertificateHTML(data)
+    // Convert logo to base64 for embedding in HTML
+    const logoBase64 = logoToBase64(data.logoUrl)
+
+    // Generate HTML content with base64 logo
+    const htmlContent = generateCertificateHTML({
+      ...data,
+      logoUrl: logoBase64
+    })
 
     // Set content
     await page.setContent(htmlContent, {
@@ -126,8 +175,14 @@ export async function generateLevelCertificatePDF(data: LevelCertificateData): P
       deviceScaleFactor: 2, // Higher quality
     })
 
-    // Generate HTML content
-    const htmlContent = generateLevelCertificateHTML(data)
+    // Convert logo to base64 for embedding in HTML
+    const logoBase64 = logoToBase64(data.logoUrl)
+
+    // Generate HTML content with base64 logo
+    const htmlContent = generateLevelCertificateHTML({
+      ...data,
+      logoUrl: logoBase64
+    })
 
     // Set content
     await page.setContent(htmlContent, {

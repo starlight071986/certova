@@ -637,7 +637,7 @@ export default function AdminUserDetailPage() {
           <strong>{confirmReset?.courseTitle}</strong> wirklich zurücksetzen?
         </p>
         <p className="text-sm text-secondary-500 mt-2">
-          Alle Lektions- und Quiz-Fortschritte werden gelöscht. Der Benutzer
+          Alle Lektions- und Test-Fortschritte werden gelöscht. Der Benutzer
           muss den Kurs von Anfang an wiederholen.
         </p>
       </Modal>

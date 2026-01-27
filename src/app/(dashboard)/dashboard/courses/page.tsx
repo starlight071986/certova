@@ -26,6 +26,7 @@ interface Course {
   isExpired: boolean
   isNotStarted: boolean
   creditCost: number
+  courseNumber?: string
 }
 
 const statusLabels: Record<string, string> = {
@@ -154,6 +155,12 @@ function CourseCard({ course, session }: { course: Course; session: ReturnType<t
               )}
             </div>
           </div>
+
+          {/* Course Number (if available) */}
+          {course.courseNumber && (
+            <div className="text-xs text-secondary-400 font-mono mb-1">{course.courseNumber}</div>
+          )}
+
           {/* Title & Description */}
           <h3 className="font-semibold text-primary-900 text-sm leading-tight mb-1 line-clamp-2">{course.title}</h3>
           <p className="text-xs text-secondary-500 line-clamp-2 mb-2">
@@ -218,20 +225,19 @@ function CourseCard({ course, session }: { course: Course; session: ReturnType<t
                 </div>
               )
             ) : (
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-secondary-400">{course.enrolledCount} Teilnehmer</span>
-                <div className="flex items-center gap-2">
-                  {course.creditCost > 0 ? (
-                    <span className="text-warning-600 font-medium flex items-center gap-1">
-                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="flex items-center justify-end text-xs">
+                {course.creditCost > 0 ? (
+                  <div className="px-3 py-1.5 bg-warning-50 border border-warning-200 rounded-md">
+                    <span className="text-warning-700 font-semibold flex items-center gap-1.5">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      {course.creditCost}
+                      {course.creditCost} Credits
                     </span>
-                  ) : (
-                    <span className="text-success-600 font-medium">Kostenlos</span>
-                  )}
-                </div>
+                  </div>
+                ) : (
+                  <span className="text-success-600 font-semibold">Kostenlos</span>
+                )}
               </div>
             )}
           </div>
@@ -438,8 +444,64 @@ export default function CoursesPage() {
       {/* Course Grid - Grouped by Status (Order: In Progress > Not Started > Completed > Available) */}
       {filteredCourses.length === 0 ? (
         <Card>
-          <CardContent className="text-center py-12">
-            <p className="text-secondary-500">Keine Kurse gefunden.</p>
+          <CardContent className="text-center py-16">
+            {/* Empty State */}
+            {courses.length === 0 ? (
+              // No courses at all - show "Create First Course"
+              <div className="max-w-md mx-auto space-y-6">
+                <div className="w-20 h-20 mx-auto rounded-full bg-primary-50 flex items-center justify-center">
+                  <svg className="w-10 h-10 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  </svg>
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold text-secondary-900">Keine Kurse vorhanden</h3>
+                  <p className="text-sm text-secondary-500">
+                    {canCreateCourse
+                      ? 'Erstellen Sie Ihren ersten Kurs, um loszulegen.'
+                      : 'Es sind noch keine Kurse verfügbar. Bitte wenden Sie sich an Ihren Administrator.'}
+                  </p>
+                </div>
+                {canCreateCourse && (
+                  <Button
+                    variant="primary"
+                    size="lg"
+                    onClick={() => setShowCreateModal(true)}
+                    className="mx-auto"
+                  >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Ersten Kurs erstellen
+                  </Button>
+                )}
+              </div>
+            ) : (
+              // Courses exist but filtered out - show "No results"
+              <div className="max-w-md mx-auto space-y-4">
+                <div className="w-16 h-16 mx-auto rounded-full bg-secondary-100 flex items-center justify-center">
+                  <svg className="w-8 h-8 text-secondary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold text-secondary-900">Keine Kurse gefunden</h3>
+                  <p className="text-sm text-secondary-500">
+                    Versuchen Sie andere Suchbegriffe oder Filter.
+                  </p>
+                </div>
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    setSearch('')
+                    setFilter('all')
+                    setSelectedCategory(null)
+                  }}
+                >
+                  Filter zurücksetzen
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       ) : (

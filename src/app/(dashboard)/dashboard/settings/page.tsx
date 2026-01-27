@@ -92,7 +92,7 @@ export default function SettingsPage() {
   // App Settings
   const [settings, setSettings] = useState<AppSettings | null>(null)
   const [publicUrl, setPublicUrl] = useState('')
-  const [coursePrefix, setCoursePrefix] = useState('CV')
+  const [coursePrefix, setCoursePrefix] = useState('CT')
   const [siteTitle, setSiteTitle] = useState('Certova')
   const [privacyUrl, setPrivacyUrl] = useState('')
   const [imprintUrl, setImprintUrl] = useState('')
@@ -129,7 +129,7 @@ export default function SettingsPage() {
         const data = await settingsRes.json()
         setSettings(data)
         setPublicUrl(data.publicUrl || '')
-        setCoursePrefix(data.courseNumberPrefix || 'CV')
+        setCoursePrefix(data.courseNumberPrefix || 'CT')
         setSiteTitle(data.siteTitle || 'Certova')
         setPrivacyUrl(data.privacyPolicyUrl || '')
         setImprintUrl(data.imprintUrl || '')

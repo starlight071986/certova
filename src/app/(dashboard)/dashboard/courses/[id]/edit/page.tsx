@@ -20,12 +20,14 @@ import {
 import QuizEditor from '@/components/QuizEditor'
 import FileUpload from '@/components/FileUpload'
 import CourseAccessManager from '@/components/CourseAccessManager'
+import RichTextEditor from '@/components/RichTextEditor'
 
 interface Lesson {
   id: string
   title: string
   type: string
   content?: string | null
+  description?: string | null
   videoUrl?: string | null
   duration: number | null
   order: number
@@ -186,6 +188,7 @@ export default function CourseEditorPage() {
     title: '',
     type: 'TEXT',
     content: '',
+    description: '',
     videoUrl: '',
     duration: '',
   })
@@ -193,6 +196,7 @@ export default function CourseEditorPage() {
     title: '',
     type: 'TEXT',
     content: '',
+    description: '',
     videoUrl: '',
     duration: '',
   })
@@ -275,13 +279,14 @@ export default function CourseEditorPage() {
           title: newLesson.title,
           type: newLesson.type,
           content: newLesson.content || undefined,
+          description: newLesson.description || undefined,
           videoUrl: newLesson.videoUrl || undefined,
           duration: newLesson.duration ? parseInt(newLesson.duration) : undefined,
         }),
       })
 
       if (res.ok) {
-        setNewLesson({ title: '', type: 'TEXT', content: '', videoUrl: '', duration: '' })
+        setNewLesson({ title: '', type: 'TEXT', content: '', description: '', videoUrl: '', duration: '' })
         setShowLessonModal(false)
         setSelectedModuleId(null)
         fetchCourse()
@@ -314,6 +319,7 @@ export default function CourseEditorPage() {
       title: lesson.title,
       type: lesson.type,
       content: lesson.content || '',
+      description: lesson.description || '',
       videoUrl: lesson.videoUrl || '',
       duration: lesson.duration?.toString() || '',
     })
@@ -332,6 +338,7 @@ export default function CourseEditorPage() {
           title: editLessonForm.title,
           type: editLessonForm.type,
           content: editLessonForm.content || null,
+          description: editLessonForm.description || null,
           videoUrl: editLessonForm.videoUrl || null,
           duration: editLessonForm.duration ? parseInt(editLessonForm.duration) : null,
         }),
@@ -885,7 +892,7 @@ export default function CourseEditorPage() {
                       </span>
                       {module.quiz && (
                         <Badge variant={module.quiz.isRequired ? 'warning' : 'secondary'} size="sm">
-                          {module.quiz.isRequired ? 'Quiz (Pflicht)' : 'Quiz'}
+                          {module.quiz.isRequired ? 'Test (Pflicht)' : 'Test'}
                           {module.quiz.questions.length > 0 && ` · ${module.quiz.questions.length} Fragen`}
                         </Badge>
                       )}
@@ -897,7 +904,7 @@ export default function CourseEditorPage() {
                         <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                         </svg>
-                        {module.quiz ? 'Quiz bearbeiten' : 'Quiz hinzufügen'}
+                        {module.quiz ? 'Test bearbeiten' : 'Test hinzufügen'}
                       </Button>
                       <Button
                         variant="primary"
@@ -1325,10 +1332,10 @@ export default function CourseEditorPage() {
         onClose={() => {
           setShowLessonModal(false)
           setSelectedModuleId(null)
-          setNewLesson({ title: '', type: 'TEXT', content: '', videoUrl: '', duration: '' })
+          setNewLesson({ title: '', type: 'TEXT', content: '', description: '', videoUrl: '', duration: '' })
         }}
         title="Neue Lektion"
-        size="lg"
+        size="full"
         footer={
           <>
             <Button variant="ghost" onClick={() => setShowLessonModal(false)}>
@@ -1352,7 +1359,13 @@ export default function CourseEditorPage() {
               label="Typ"
               options={lessonTypes.map((t) => ({ value: t.value, label: `${t.icon} ${t.label}` }))}
               value={newLesson.type}
-              onChange={(e) => setNewLesson({ ...newLesson, type: e.target.value })}
+              onChange={(e) => setNewLesson({
+                ...newLesson,
+                type: e.target.value,
+                content: '',
+                videoUrl: '',
+                description: newLesson.description
+              })}
             />
             <Input
               label="Dauer (Minuten)"
@@ -1362,14 +1375,34 @@ export default function CourseEditorPage() {
               placeholder="10"
             />
           </div>
-          {newLesson.type === 'TEXT' && (
-            <Textarea
-              label="Inhalt"
-              value={newLesson.content}
-              onChange={(e) => setNewLesson({ ...newLesson, content: e.target.value })}
-              rows={6}
-              placeholder="Lektionsinhalt eingeben..."
+
+          <div>
+            <label className="block text-sm font-medium text-secondary-700 mb-2">
+              Beschreibung (optional)
+            </label>
+            <RichTextEditor
+              key="new-lesson-description"
+              content={newLesson.description}
+              onChange={(html) => setNewLesson({ ...newLesson, description: html })}
+              placeholder="Beschreiben Sie die Lektion mit Rich-Text (optional)..."
             />
+            <p className="text-xs text-secondary-500 mt-1">
+              Verwenden Sie die Toolbar für Formatierungen, Code-Blöcke und mehr.
+            </p>
+          </div>
+
+          {newLesson.type === 'TEXT' && (
+            <div>
+              <label className="block text-sm font-medium text-secondary-700 mb-2">
+                Hauptinhalt
+              </label>
+              <RichTextEditor
+                key="new-lesson-content"
+                content={newLesson.content}
+                onChange={(html) => setNewLesson({ ...newLesson, content: html })}
+                placeholder="Geben Sie den Hauptinhalt der Lektion ein..."
+              />
+            </div>
           )}
           {newLesson.type === 'VIDEO' && (
             <div className="space-y-3">
@@ -1461,13 +1494,17 @@ export default function CourseEditorPage() {
           )}
           {newLesson.type === 'INTERACTIVE' && (
             <div className="space-y-4">
-              <Textarea
-                label="Anweisungen / Einleitung"
-                value={newLesson.content}
-                onChange={(e) => setNewLesson({ ...newLesson, content: e.target.value })}
-                rows={3}
-                placeholder="Beschreiben Sie die interaktive Aufgabe..."
-              />
+              <div>
+                <label className="block text-sm font-medium text-secondary-700 mb-2">
+                  Anweisungen / Einleitung
+                </label>
+                <RichTextEditor
+                  key="new-interactive-content"
+                  content={newLesson.content}
+                  onChange={(html) => setNewLesson({ ...newLesson, content: html })}
+                  placeholder="Beschreiben Sie die interaktive Aufgabe..."
+                />
+              </div>
               <div className="p-4 bg-accent-50 rounded-lg border border-accent-200">
                 <h4 className="font-medium text-accent-900 mb-2 flex items-center gap-2">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1499,7 +1536,7 @@ export default function CourseEditorPage() {
           setEditingLesson(null)
         }}
         title="Lektion bearbeiten"
-        size="lg"
+        size="full"
         footer={
           <>
             <Button variant="ghost" onClick={() => setShowEditLessonModal(false)}>
@@ -1523,7 +1560,12 @@ export default function CourseEditorPage() {
               label="Typ"
               options={lessonTypes.map((t) => ({ value: t.value, label: `${t.icon} ${t.label}` }))}
               value={editLessonForm.type}
-              onChange={(e) => setEditLessonForm({ ...editLessonForm, type: e.target.value })}
+              onChange={(e) => setEditLessonForm({
+                ...editLessonForm,
+                type: e.target.value,
+                content: '',
+                videoUrl: ''
+              })}
             />
             <Input
               label="Dauer (Minuten)"
@@ -1533,14 +1575,35 @@ export default function CourseEditorPage() {
               placeholder="10"
             />
           </div>
-          {editLessonForm.type === 'TEXT' && (
-            <Textarea
-              label="Inhalt"
-              value={editLessonForm.content}
-              onChange={(e) => setEditLessonForm({ ...editLessonForm, content: e.target.value })}
-              rows={6}
-              placeholder="Lektionsinhalt eingeben..."
+
+          {/* Rich-Text Description for all lesson types */}
+          <div>
+            <label className="block text-sm font-medium text-secondary-700 mb-2">
+              Beschreibung (optional)
+            </label>
+            <RichTextEditor
+              key={`description-${editingLesson?.id || 'new'}`}
+              content={editLessonForm.description}
+              onChange={(html) => setEditLessonForm({ ...editLessonForm, description: html })}
+              placeholder="Beschreiben Sie die Lektion mit Rich-Text (optional)..."
             />
+            <p className="text-xs text-secondary-500 mt-1">
+              Verwenden Sie die Toolbar für Formatierungen, Code-Blöcke und mehr.
+            </p>
+          </div>
+
+          {editLessonForm.type === 'TEXT' && (
+            <div>
+              <label className="block text-sm font-medium text-secondary-700 mb-2">
+                Hauptinhalt
+              </label>
+              <RichTextEditor
+                key={`content-${editingLesson?.id || 'new'}`}
+                content={editLessonForm.content}
+                onChange={(html) => setEditLessonForm({ ...editLessonForm, content: html })}
+                placeholder="Geben Sie den Hauptinhalt der Lektion ein..."
+              />
+            </div>
           )}
           {editLessonForm.type === 'VIDEO' && (
             <div className="space-y-3">
@@ -1632,13 +1695,17 @@ export default function CourseEditorPage() {
           )}
           {editLessonForm.type === 'INTERACTIVE' && (
             <div className="space-y-4">
-              <Textarea
-                label="Anweisungen / Einleitung"
-                value={editLessonForm.content}
-                onChange={(e) => setEditLessonForm({ ...editLessonForm, content: e.target.value })}
-                rows={3}
-                placeholder="Beschreiben Sie die interaktive Aufgabe..."
-              />
+              <div>
+                <label className="block text-sm font-medium text-secondary-700 mb-2">
+                  Anweisungen / Einleitung
+                </label>
+                <RichTextEditor
+                  key={`interactive-content-${editingLesson?.id || 'new'}`}
+                  content={editLessonForm.content}
+                  onChange={(html) => setEditLessonForm({ ...editLessonForm, content: html })}
+                  placeholder="Beschreiben Sie die interaktive Aufgabe..."
+                />
+              </div>
               <div className="p-4 bg-accent-50 rounded-lg border border-accent-200">
                 <h4 className="font-medium text-accent-900 mb-2 flex items-center gap-2">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -179,6 +179,7 @@ export async function checkCourseCompletionAndCreateCertificate(
     userEmail: user.email,
     courseTitle: course.title,
     courseDescription: course.description,
+    courseNumber: course.courseNumber,
     instructorName: course.instructor.name || 'Unbekannt',
     completedAt,
     certificateNumber: certNumber,

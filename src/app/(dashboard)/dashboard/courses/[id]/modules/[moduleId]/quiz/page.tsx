@@ -260,7 +260,7 @@ export default function QuizPage() {
         const quizData = await quizRes.json()
         setQuiz(quizData)
       } else {
-        setError('Quiz nicht gefunden')
+        setError('Test nicht gefunden')
       }
 
       if (statusRes.ok) {
@@ -271,7 +271,7 @@ export default function QuizPage() {
         }
       }
     } catch (err) {
-      setError('Fehler beim Laden des Quiz')
+      setError('Fehler beim Laden des Tests')
     } finally {
       setLoading(false)
     }
@@ -313,10 +313,10 @@ export default function QuizPage() {
         setResult(null)
       } else {
         const data = await res.json()
-        setError(data.error || 'Fehler beim Starten des Quiz')
+        setError(data.error || 'Fehler beim Starten des Tests')
       }
     } catch (err) {
-      setError('Fehler beim Starten des Quiz')
+      setError('Fehler beim Starten des Tests')
     } finally {
       setStarting(false)
     }
@@ -375,10 +375,10 @@ export default function QuizPage() {
         fetchQuiz() // Refresh status
       } else {
         const data = await res.json()
-        setError(data.error || 'Fehler beim Abgeben des Quiz')
+        setError(data.error || 'Fehler beim Abgeben des Tests')
       }
     } catch (err) {
-      setError('Fehler beim Abgeben des Quiz')
+      setError('Fehler beim Abgeben des Tests')
     } finally {
       setSubmitting(false)
     }
@@ -404,7 +404,7 @@ export default function QuizPage() {
           </svg>
           Zurück zum Kurs
         </Link>
-        <Alert variant="danger">{error || 'Quiz nicht gefunden'}</Alert>
+        <Alert variant="danger">{error || 'Test nicht gefunden'}</Alert>
       </div>
     )
   }
@@ -745,7 +745,7 @@ export default function QuizPage() {
             </Button>
           ) : (
             <Button variant="accent" onClick={submitQuiz} isLoading={submitting}>
-              Quiz abgeben
+              Test abgeben
             </Button>
           )}
         </div>
@@ -838,7 +838,7 @@ export default function QuizPage() {
                 Bereits bestanden
               </Badge>
               <p className="text-secondary-600 mb-4">
-                Sie haben dieses Quiz bereits erfolgreich abgeschlossen.
+                Sie haben diesen Test bereits erfolgreich abgeschlossen.
               </p>
               <Button variant="outline" onClick={() => router.push(`/dashboard/courses/${params.id}`)}>
                 Zurück zum Kurs
@@ -846,7 +846,7 @@ export default function QuizPage() {
             </div>
           ) : status?.canAttempt ? (
             <Button variant="accent" className="w-full" onClick={startQuiz} isLoading={starting}>
-              Quiz starten
+              Test starten
             </Button>
           ) : (
             <div className="text-center">

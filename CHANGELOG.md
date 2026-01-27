@@ -5,6 +5,22 @@ Alle bedeutenden Änderungen an diesem Projekt werden in dieser Datei dokumentie
 Das Format basiert auf [Keep a Changelog](https://keepachangelog.com/de/1.0.0/),
 und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.1.0] - 2026-01-27
+
+### Hinzugefügt
+- **Lektionsbeschreibung**: Beschreibungsfeld für Lektionen im "Neue Lektion"-Modal
+- **RichTextEditor für interaktive Lektionen**: Rich-Text-Editor für Anweisungen/Einleitung bei interaktiven Lektionen
+- **RichTextEditor für Text-Lektionen**: Rich-Text-Editor im "Neue Lektion"-Modal für Text-Inhalte
+
+### Geändert
+- **Beschreibungsbox-Styling**: Vereinfachtes Design ohne Farbverlauf, reduzierter Innenabstand
+- **Modal-Größe**: "Neue Lektion"-Modal auf Vollbild-Modus erweitert
+- **Leerer Inhalt**: Beschreibungsbox wird ausgeblendet, wenn kein Inhalt vorhanden ist
+
+### Behoben
+- **Content-Leaking**: Hauptinhalt von Text-Lektionen wird nicht mehr in Upload-Felder anderer Lektionsarten übertragen
+- **Typenänderung**: Content- und VideoUrl-Felder werden beim Wechsel des Lektionstyps korrekt zurückgesetzt
+
 ## [1.0.0] - 2026-01-27
 
 ### Hinzugefügt

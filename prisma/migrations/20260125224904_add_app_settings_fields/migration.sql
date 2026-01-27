@@ -6,7 +6,7 @@
 */
 -- AlterTable
 ALTER TABLE "AppSettings" DROP COLUMN "certificateNumberPrefix",
-ADD COLUMN     "courseNumberPrefix" TEXT NOT NULL DEFAULT 'LH',
+ADD COLUMN     "courseNumberPrefix" TEXT NOT NULL DEFAULT 'CT',
 ADD COLUMN     "imprintUrl" TEXT,
 ADD COLUMN     "logoUrl" TEXT,
 ADD COLUMN     "privacyPolicyUrl" TEXT,

@@ -10,6 +10,7 @@ function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
+  const setupSuccess = searchParams.get('setup') === 'success'
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -46,9 +47,7 @@ function LoginForm() {
       {/* Header */}
       <header className="p-4">
         <Link href="/" className="flex items-center gap-2 w-fit">
-          <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center p-1">
-            <img src="/assets/certova-icon.svg" alt="Certova Logo" className="w-full h-full" />
-          </div>
+          <img src="/assets/certova-logo_only-Farbe.svg" alt="Certova Logo" className="h-8" />
           <span className="text-xl font-bold text-primary-900">Certova</span>
         </Link>
       </header>
@@ -63,6 +62,12 @@ function LoginForm() {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {setupSuccess && (
+              <Alert variant="success" className="mb-4">
+                Administrator-Account erfolgreich erstellt! Sie können sich jetzt anmelden.
+              </Alert>
+            )}
+
             {error && (
               <Alert variant="danger" className="mb-4" onClose={() => setError('')}>
                 {error}

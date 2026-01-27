@@ -128,12 +128,12 @@ export default function CourseProgressBar({
                 </div>
               </div>
 
-              {/* Short line to Quiz (if exists) */}
+              {/* Short line to Test (if exists) */}
               {module.hasQuiz && (
                 <>
                   <div className={`w-2 h-0.5 ${getLineColor(module.status)}`} />
 
-                  {/* Quiz Circle (smaller, close to module) */}
+                  {/* Test Circle (smaller, close to module) */}
                   <div className="relative group flex-shrink-0">
                     <button
                       onClick={() => navigateToQuiz(module.id)}
@@ -157,9 +157,9 @@ export default function CourseProgressBar({
                       )}
                     </button>
 
-                    {/* Quiz Tooltip */}
+                    {/* Test Tooltip */}
                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-secondary-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
-                      Quiz
+                      Test
                       <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-secondary-900" />
                     </div>
                   </div>

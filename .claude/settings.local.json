@@ -22,7 +22,11 @@
       "Bash(grep:*)",
       "Bash(npm run lint:*)",
       "Bash(npx tsc:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git tag:*)",
+      "Bash(git reset:*)",
+      "Bash(npm version:*)"
     ]
   }
 }

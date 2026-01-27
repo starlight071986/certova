@@ -8,6 +8,7 @@ const createLessonSchema = z.object({
   title: z.string().min(1),
   type: z.enum(['TEXT', 'VIDEO', 'AUDIO', 'PDF', 'INTERACTIVE', 'POWERPOINT']),
   content: z.string().optional(),
+  description: z.string().optional(),
   videoUrl: z.string().refine(
     (val) => !val || val.startsWith('/') || val.startsWith('http://') || val.startsWith('https://'),
     { message: 'Ungültige URL' }

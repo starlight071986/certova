@@ -8,6 +8,7 @@ const updateLessonSchema = z.object({
   title: z.string().min(1).optional(),
   type: z.enum(['TEXT', 'VIDEO', 'AUDIO', 'PDF', 'INTERACTIVE', 'POWERPOINT']).optional(),
   content: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
   videoUrl: z.string().refine(
     (val) => !val || val.startsWith('/') || val.startsWith('http://') || val.startsWith('https://'),
     { message: 'Ungültige URL' }
@@ -102,6 +103,7 @@ export async function GET(
       title: lesson.title,
       type: lesson.type,
       content: lesson.content,
+      description: lesson.description,
       videoUrl: lesson.videoUrl,
       duration: lesson.duration,
       completed: lesson.progress[0]?.completed || false,
@@ -176,7 +178,7 @@ export async function PATCH(
       )
     }
 
-    const { title, type, content, videoUrl, duration, order } = result.data
+    const { title, type, content, description, videoUrl, duration, order } = result.data
 
     const updatedLesson = await db.lesson.update({
       where: { id: params.id },
@@ -184,6 +186,7 @@ export async function PATCH(
         ...(title && { title }),
         ...(type && { type }),
         ...(content !== undefined && { content }),
+        ...(description !== undefined && { description }),
         ...(videoUrl !== undefined && { videoUrl }),
         ...(duration !== undefined && { duration }),
         ...(order && { order }),

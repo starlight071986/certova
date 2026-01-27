@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { Card, CardContent, Button, Alert, Spinner, Badge } from '@/components/ui'
 import PDFViewer from '@/components/PDFViewer'
 import PowerPointViewer from '@/components/PowerPointViewer'
+import CodeBlockWithCopy from '@/components/CodeBlockWithCopy'
 
 // Helper functions for video embedding
 function extractYouTubeId(url: string): string {
@@ -18,6 +19,18 @@ function extractVimeoId(url: string): string {
   const regExp = /vimeo\.com\/(?:video\/)?(\d+)/
   const match = url.match(regExp)
   return match ? match[1] : ''
+}
+
+function hasContent(html: string | null | undefined): boolean {
+  if (!html || html.trim() === '') return false
+  // Remove common empty HTML patterns
+  const stripped = html
+    .replace(/<p><\/p>/g, '')
+    .replace(/<p><br><\/p>/g, '')
+    .replace(/<p><br\/><\/p>/g, '')
+    .replace(/<br\s*\/?>/g, '')
+    .replace(/\s+/g, '')
+  return stripped.length > 0
 }
 
 interface ModuleQuiz {
@@ -33,6 +46,7 @@ interface Lesson {
   title: string
   type: string
   content: string | null
+  description: string | null
   videoUrl: string | null
   duration: number | null
   completed: boolean
@@ -181,9 +195,17 @@ export default function LessonPage() {
 
       {/* Lesson Header */}
       <div className="flex items-center justify-between">
-        <div>
+        <div className="flex-1">
           <Badge variant="secondary" className="mb-2">{lesson.module.title}</Badge>
           <h1 className="text-2xl font-bold text-primary-900">{lesson.title}</h1>
+          {lesson.duration && (
+            <div className="flex items-center gap-1 mt-2 text-sm text-secondary-500">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>{lesson.duration} Minuten</span>
+            </div>
+          )}
         </div>
         {lesson.completed && (
           <Badge variant="success" size="lg">
@@ -195,9 +217,22 @@ export default function LessonPage() {
         )}
       </div>
 
+      {/* Lesson Description */}
+      {hasContent(lesson.description) && (
+        <Card className="bg-secondary-50 border-secondary-200">
+          <CardContent className="px-4 pt-0 pb-2">
+            <h3 className="text-sm font-medium text-secondary-900 mb-2">Beschreibung</h3>
+            <div className="lesson-content text-secondary-700">
+              <div dangerouslySetInnerHTML={{ __html: lesson.description }} />
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Lesson Content */}
       <Card>
         <CardContent>
+
           {lesson.type === 'VIDEO' && lesson.videoUrl ? (
             <div className="aspect-video bg-black rounded-lg mb-6 overflow-hidden">
               {lesson.videoUrl.startsWith('/uploads') ? (
@@ -270,20 +305,16 @@ export default function LessonPage() {
           )}
 
           {lesson.type === 'TEXT' && lesson.content ? (
-            <div className="prose prose-primary max-w-none">
-              <div className="whitespace-pre-wrap text-secondary-700 leading-relaxed">
-                {lesson.content}
-              </div>
+            <div className="lesson-content">
+              <div dangerouslySetInnerHTML={{ __html: lesson.content }} />
             </div>
           ) : null}
 
           {lesson.type === 'INTERACTIVE' && (
             <div className="space-y-6">
               {lesson.content && (
-                <div className="prose prose-primary max-w-none">
-                  <div className="whitespace-pre-wrap text-secondary-700 leading-relaxed">
-                    {lesson.content}
-                  </div>
+                <div className="lesson-content">
+                  <div dangerouslySetInnerHTML={{ __html: lesson.content }} />
                 </div>
               )}
               <div className="p-6 bg-accent-50 rounded-lg border border-accent-200">
@@ -315,13 +346,6 @@ export default function LessonPage() {
             <div className="rounded-lg overflow-hidden" style={{ height: '80vh' }}>
               <PowerPointViewer lessonId={lesson.id} title={lesson.title} />
             </div>
-          )}
-
-          {/* Duration */}
-          {lesson.duration && (
-            <p className="text-sm text-secondary-500 mt-6">
-              Geschätzte Dauer: {lesson.duration} Minuten
-            </p>
           )}
         </CardContent>
       </Card>
@@ -386,7 +410,7 @@ export default function LessonPage() {
                 Modul &quot;{lesson.module.title}&quot; abgeschlossen!
               </h3>
 
-              {/* Quiz Section */}
+              {/* Test Section */}
               {lesson.navigation.moduleQuiz && (
                 <div className="mb-4">
                   {lesson.navigation.moduleQuiz.passed ? (
@@ -394,14 +418,14 @@ export default function LessonPage() {
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      Lernerfolgskontrolle bestanden
+                      Test bestanden
                     </div>
                   ) : (
                     <div className="space-y-3">
                       <p className="text-secondary-600">
                         {lesson.navigation.moduleQuiz.isRequired
-                          ? 'Bitte absolvieren Sie die Lernerfolgskontrolle, um mit dem nachsten Modul fortzufahren.'
-                          : 'Optional: Testen Sie Ihr Wissen mit der Lernerfolgskontrolle.'}
+                          ? 'Bitte absolvieren Sie die Test, um mit dem nachsten Modul fortzufahren.'
+                          : 'Optional: Testen Sie Ihr Wissen mit der Test.'}
                       </p>
                       <Button
                         variant="accent"
@@ -435,7 +459,7 @@ export default function LessonPage() {
                     </Button>
                   ) : (
                     <p className="text-sm text-secondary-500">
-                      Absolvieren Sie zuerst die Lernerfolgskontrolle, um fortzufahren.
+                      Absolvieren Sie zuerst die Test, um fortzufahren.
                     </p>
                   )}
                 </div>
@@ -466,6 +490,9 @@ export default function LessonPage() {
           </CardContent>
         </Card>
       )}
+
+      {/* Add copy buttons to code blocks */}
+      <CodeBlockWithCopy />
     </div>
   )
 }

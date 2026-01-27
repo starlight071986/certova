@@ -663,7 +663,7 @@ export default function CourseDetailPage() {
                     </span>
                     {module.quiz && (
                       <p className="text-xs text-secondary-400 mt-0.5">
-                        Quiz: {module.moduleProgress?.quizPassed ? 'Bestanden' : 'Offen'}
+                        Test: {module.moduleProgress?.quizPassed ? 'Bestanden' : 'Offen'}
                       </p>
                     )}
                   </div>
@@ -708,7 +708,7 @@ export default function CourseDetailPage() {
                             }`}
                           />
                           <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-secondary-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
-                            Quiz {module.moduleProgress?.quizPassed ? '✓' : ''}
+                            Test {module.moduleProgress?.quizPassed ? '✓' : ''}
                           </div>
                         </div>
                       )}
@@ -779,7 +779,7 @@ export default function CourseDetailPage() {
                   </div>
                 ))}
 
-                {/* Quiz Section */}
+                {/* Test Section */}
                 {module.quiz && (
                   <div
                     className={`px-6 py-3 flex items-center gap-4 bg-accent-50 ${
@@ -791,7 +791,7 @@ export default function CourseDetailPage() {
                       }
                     }}
                   >
-                    {/* Quiz Status */}
+                    {/* Test Status */}
                     <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${
                       module.moduleProgress?.quizPassed
                         ? 'bg-success-100 text-success-600'
@@ -808,14 +808,14 @@ export default function CourseDetailPage() {
                       )}
                     </div>
 
-                    {/* Quiz Icon */}
+                    {/* Test Icon */}
                     <div className="text-accent-500">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
 
-                    {/* Quiz Title */}
+                    {/* Test Title */}
                     <div className="flex-1">
                       <span className={`font-medium ${module.moduleProgress?.quizPassed ? 'text-secondary-500' : 'text-accent-700'}`}>
                         {module.quiz.title}

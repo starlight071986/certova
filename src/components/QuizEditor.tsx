@@ -65,7 +65,7 @@ export default function QuizEditor({ moduleId, moduleName, onClose, onSave }: Qu
   const [success, setSuccess] = useState('')
 
   // Quiz settings
-  const [title, setTitle] = useState('Lernerfolgskontrolle')
+  const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [isRequired, setIsRequired] = useState(false)
   const [passingScore, setPassingScore] = useState(80)
@@ -358,7 +358,7 @@ export default function QuizEditor({ moduleId, moduleName, onClose, onSave }: Qu
         <CardHeader className="flex-shrink-0 border-b">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Lernerfolgskontrolle</CardTitle>
+              <CardTitle>Test</CardTitle>
               <p className="text-sm text-secondary-500 mt-1">Modul: {moduleName}</p>
             </div>
             <Button variant="ghost" size="sm" onClick={onClose}>
@@ -382,7 +382,7 @@ export default function QuizEditor({ moduleId, moduleName, onClose, onSave }: Qu
                 label="Titel"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Lernerfolgskontrolle"
+                placeholder="Test"
               />
               <Input
                 label="Bestehensgrenze (%)"
@@ -398,7 +398,7 @@ export default function QuizEditor({ moduleId, moduleName, onClose, onSave }: Qu
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={2}
-              placeholder="Kurze Beschreibung der Lernerfolgskontrolle..."
+              placeholder="Kurze Beschreibung des Tests..."
             />
             <div className="grid grid-cols-3 gap-4">
               <Input
@@ -571,7 +571,7 @@ export default function QuizEditor({ moduleId, moduleName, onClose, onSave }: Qu
                 <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
-                Lernerfolgskontrolle löschen
+                Test löschen
               </Button>
             </div>
           )}
