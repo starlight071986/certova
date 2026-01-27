@@ -1,6 +1,9 @@
-<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Modernes C Symbol mit Plus (symbolisiert Zertifizierung/Lernen) -->
-  <circle cx="16" cy="16" r="14" stroke="white" stroke-width="2.5" fill="none"/>
-  <circle cx="16" cy="16" r="6" fill="white" opacity="0.3"/>
-  <path d="M16 10V22M10 16H22" stroke="white" stroke-width="2" stroke-linecap="round"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Vereinfachte Icon-Version des Certova-Logos -->
+  <rect fill="#0071bc" x="10" y="10" width="35" height="35"/>
+  <rect fill="#0071bc" x="10" y="47" width="35" height="43"/>
+  <rect fill="#0071bc" x="47" y="73" width="14" height="17"/>
+  <path fill="#f7931e" d="M63,73v17h17V73H63z M69,84l-4-4l2-2l2,2l6-6l2,2L69,84z"/>
+  <rect fill="gray" x="47" y="10" width="43" height="35"/>
 </svg>

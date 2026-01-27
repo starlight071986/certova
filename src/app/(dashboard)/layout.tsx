@@ -156,7 +156,7 @@ export default function DashboardLayout({
         <SidebarHeader>
           <Link href="/dashboard" className="flex items-center gap-2">
             <img
-              src={appSettings?.logoUrl || '/assets/certova-logo.svg'}
+              src={appSettings?.logoUrl || '/assets/certova-logo_only-Farbe.svg'}
               alt={appSettings?.siteTitle || 'Certova'}
               className="h-8 object-contain flex-shrink-0"
               style={{ maxWidth: sidebarOpen ? '160px' : '32px' }}
