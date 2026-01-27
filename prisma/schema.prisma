@@ -1,0 +1,534 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  LEARNER
+  INSTRUCTOR
+  REVIEWER
+  ADMIN
+}
+
+enum CourseStatus {
+  DRAFT
+  SUBMITTED
+  IN_REVIEW
+  APPROVED
+  REJECTED
+  ARCHIVED
+}
+
+enum LessonType {
+  TEXT
+  VIDEO
+  AUDIO
+  PDF
+  INTERACTIVE
+  POWERPOINT
+}
+
+model User {
+  id             String   @id @default(cuid())
+  email          String   @unique
+  passwordHash   String?
+  name           String?
+  image          String?
+  role           Role     @default(LEARNER)
+  emailVerified  DateTime?
+  company        String?  // Unternehmen/Organisation (Freitext)
+  customerNumber String?  @unique // Kundennummer
+  credits        Int      @default(0)  // Kredit-Guthaben für Kurseinbuchungen
+  isActive       Boolean  @default(true)  // Benutzer kann deaktiviert werden
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+
+  createdCourses         Course[]                 @relation("CourseInstructor")
+  enrollments            Enrollment[]
+  progress               LessonProgress[]
+  moduleProgress         ModuleProgress[]
+  examAttempts           ExamAttempt[]
+  quizAttempts           QuizAttempt[]
+  certificates           Certificate[]
+  reviews                CourseReview[]
+  userGroups             UserGroupMember[]
+  creditHistory          CreditHistory[]
+  certificationLevels    UserCertificationLevel[]
+}
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  logo      String?
+  domain    String?  @unique
+  licenses  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users   User[]
+  courses Course[]
+}
+
+enum CertificateExpiryType {
+  NEVER          // Never expires
+  FIXED_DATE     // Fixed expiry date
+  PERIOD_DAYS    // Period in days from completion
+  PERIOD_MONTHS  // Period in months from completion
+  PERIOD_YEARS   // Period in years from completion
+}
+
+model Course {
+  id           String       @id @default(cuid())
+  title        String
+  courseNumber String?      // Optional course number for identification
+  description  String?
+  thumbnail    String?
+  status       CourseStatus @default(DRAFT)
+  version      Int          @default(1)
+  publishedAt  DateTime?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  // Course availability dates
+  startDate    DateTime?    // Kurs wird erst ab diesem Datum angezeigt (außer für Admins)
+  endDate      DateTime?    // Kurs wird nach diesem Datum ausgeblendet, angefangene bleiben sichtbar
+
+  // Credit cost for enrollment
+  creditCost   Int          @default(0)  // 0 = kostenlos
+
+  // Certificate expiry settings
+  certificateExpiryType   CertificateExpiryType @default(PERIOD_YEARS)
+  certificateExpiryValue  Int?                  // Value for PERIOD_* types
+  certificateExpiryDate   DateTime?             // For FIXED_DATE type
+
+  instructorId   String
+  instructor     User          @relation("CourseInstructor", fields: [instructorId], references: [id])
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+
+  modules              Module[]
+  enrollments          Enrollment[]
+  exams                Exam[]
+  certificates         Certificate[]
+  reviews              CourseReview[]
+  categories           CourseCategory[]
+  accessRules          CourseAccess[]
+  certificationLevels  CertificationLevelCourse[]
+}
+
+model CourseCategory {
+  id       String @id @default(cuid())
+  name     String @unique
+  courses  Course[]
+}
+
+// Benutzergruppen
+model UserGroup {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  members                   UserGroupMember[]
+  courseAccess              CourseAccess[]
+  certificationLevelAccess  CertificationLevelAccess[]
+}
+
+model UserGroupMember {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  userId  String
+  user    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  groupId String
+  group   UserGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, groupId])
+}
+
+// Kurszugriff - Wer darf welchen Kurs sehen
+enum CourseAccessType {
+  ALL        // Für alle Benutzer freigegeben
+  GROUP      // Für bestimmte Benutzergruppen
+  USER       // Für bestimmte Benutzer
+}
+
+model CourseAccess {
+  id        String           @id @default(cuid())
+  type      CourseAccessType
+  createdAt DateTime         @default(now())
+
+  courseId String
+  course   Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  groupId  String?
+  group    UserGroup? @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  userId   String?
+
+  @@unique([courseId, type, groupId, userId])
+}
+
+model Module {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  order       Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  courseId String
+  course   Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons  Lesson[]
+  quiz     ModuleQuiz?
+  progress ModuleProgress[]
+}
+
+enum QuestionType {
+  YES_NO
+  SINGLE_CHOICE
+  MULTIPLE_CHOICE
+  MATCHING
+}
+
+model ModuleQuiz {
+  id                String   @id @default(cuid())
+  title             String   @default("Lernerfolgskontrolle")
+  description       String?
+  isRequired        Boolean  @default(false)
+  passingScore      Int      @default(80) // Prozent der richtigen Antworten
+  maxAttempts       Int      @default(3)  // 0 = unbegrenzt
+  shuffleQuestions  Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  moduleId  String   @unique
+  module    Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  questions QuizQuestion[]
+  attempts  QuizAttempt[]
+}
+
+model QuizQuestion {
+  id            String       @id @default(cuid())
+  type          QuestionType
+  text          String
+  options       Json?        // Array von {id, text, isCorrect} für Choice-Fragen
+  correctAnswer Boolean?     // Für YES_NO Fragen
+  order         Int
+  points        Int          @default(1)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  quizId  String
+  quiz    ModuleQuiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  answers QuizAnswer[]
+}
+
+model QuizAttempt {
+  id          String    @id @default(cuid())
+  score       Int?      // Erreichte Punktzahl
+  maxScore    Int?      // Maximale Punktzahl
+  percentage  Int?      // Prozent
+  passed      Boolean?
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  userId  String
+  user    User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quizId  String
+  quiz    ModuleQuiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  answers QuizAnswer[]
+}
+
+model QuizAnswer {
+  id        String   @id @default(cuid())
+  answer    Json     // Die gegebene Antwort
+  correct   Boolean
+  points    Int      @default(0)
+  createdAt DateTime @default(now())
+
+  attemptId  String
+  attempt    QuizAttempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questionId String
+  question   QuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+enum ModuleStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+}
+
+model ModuleProgress {
+  id          String       @id @default(cuid())
+  status      ModuleStatus @default(NOT_STARTED)
+  quizPassed  Boolean?
+  completedAt DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  moduleId String
+  module   Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, moduleId])
+}
+
+model Lesson {
+  id        String     @id @default(cuid())
+  title     String
+  type      LessonType
+  content   String?
+  videoUrl  String?
+  duration  Int?
+  order     Int
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  moduleId String
+  module   Module           @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  progress LessonProgress[]
+}
+
+model Enrollment {
+  id           String    @id @default(cuid())
+  enrolledAt   DateTime  @default(now())
+  completedAt  DateTime?
+  lastAccessAt DateTime?
+
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId String
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+}
+
+model LessonProgress {
+  id          String    @id @default(cuid())
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+  timeSpent   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonId String
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+}
+
+model Exam {
+  id            String   @id @default(cuid())
+  title         String
+  description   String?
+  timeLimit     Int?
+  passingScore  Int      @default(70)
+  maxAttempts   Int      @default(3)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  courseId String
+  course   Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  questions Question[]
+  attempts  ExamAttempt[]
+}
+
+model Question {
+  id      String @id @default(cuid())
+  type    String
+  text    String
+  options Json?
+  answer  Json
+  points  Int    @default(1)
+  order   Int
+
+  examId  String
+  exam    Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  answers Answer[]
+}
+
+model ExamAttempt {
+  id          String    @id @default(cuid())
+  score       Int?
+  passed      Boolean?
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  userId  String
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  examId  String
+  exam    Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  answers Answer[]
+}
+
+model Answer {
+  id        String   @id @default(cuid())
+  answer    Json
+  correct   Boolean?
+  points    Int?
+  createdAt DateTime @default(now())
+
+  attemptId  String
+  attempt    ExamAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questionId String
+  question   Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+model Certificate {
+  id             String    @id @default(cuid())
+  number         String    @unique
+  issuedAt       DateTime  @default(now())
+  expiresAt      DateTime?
+  pdfData        Bytes?    // Stored PDF binary data
+
+  // Stored course info (persists even if course is deleted)
+  courseTitle      String
+  courseDescription String?
+  instructorName   String
+  completedAt      DateTime
+
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId String?
+  course   Course? @relation(fields: [courseId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, courseId])
+}
+
+model CourseReview {
+  id        String   @id @default(cuid())
+  status    CourseStatus
+  comment   String?
+  createdAt DateTime @default(now())
+
+  reviewerId String
+  reviewer   User   @relation(fields: [reviewerId], references: [id])
+  courseId   String
+  course     Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+}
+
+// Global application settings
+model AppSettings {
+  id                      String   @id @default("default")
+  publicUrl               String?  // Öffentliche URL der Anwendung (z.B. https://ihr-lms.de)
+  courseNumberPrefix      String   @default("LH")  // Prefix für Kursnummern
+  siteTitle               String   @default("LearnHub")
+  logoUrl                 String?  // URL zum hochgeladenen Logo
+  faviconUrl              String?  // URL zum hochgeladenen Favicon
+  privacyPolicyUrl        String?  // Link zu Datenschutzhinweisen
+  imprintUrl              String?  // Link zum Impressum
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+}
+
+// Kredit-Verlauf für Benutzer
+enum CreditTransactionType {
+  PURCHASE        // Kredits gekauft/hinzugefügt
+  ENROLLMENT      // Für Kurseinschreibung abgezogen
+  REFUND          // Rückerstattung
+  ADMIN_ADJUST    // Admin-Anpassung
+  BONUS           // Bonus-Kredits
+}
+
+model CreditHistory {
+  id          String                @id @default(cuid())
+  amount      Int                   // Positiv = Gutschrift, Negativ = Abbuchung
+  balance     Int                   // Neuer Kontostand nach Transaktion
+  type        CreditTransactionType
+  description String?               // Optionale Beschreibung
+  createdAt   DateTime              @default(now())
+
+  userId      String
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Optional: Verknüpfung zur Kurseinschreibung
+  courseId    String?
+  courseTitle String?               // Gespeichert für historische Referenz
+}
+
+// Zertifizierungsstufen (z.B. Partner Level Silber, Gold)
+model CertificationLevel {
+  id                  String   @id @default(cuid())
+  name                String   @unique  // z.B. "Partner Level Silber"
+  description         String?
+  order               Int      @default(0)  // Sortierreihenfolge
+  isActive            Boolean  @default(true)
+
+  // Logo (einfacher Upload)
+  logoUrl             String?  // Hochgeladenes Logo für diese Stufe
+
+  // Verfügbarkeits-Zeitraum
+  startDate           DateTime?  // Stufe wird erst ab diesem Datum angezeigt
+  endDate             DateTime?  // Stufe wird nach diesem Datum ausgeblendet
+
+  // Zertifikat-Gültigkeit (analog zu Course)
+  certificateExpiryType  CertificateExpiryType @default(NEVER)
+  certificateExpiryValue Int?  // Wert für PERIOD_* Typen (Anzahl Tage/Monate/Jahre)
+  certificateExpiryDate  DateTime?  // Festes Datum für FIXED_DATE Typ
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  // Relationen
+  courses             CertificationLevelCourse[]
+  accessRules         CertificationLevelAccess[]
+  userLevels          UserCertificationLevel[]
+}
+
+// Zuordnung von Kursen zu Zertifizierungsstufen
+model CertificationLevelCourse {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  levelId   String
+  level     CertificationLevel @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([levelId, courseId])
+}
+
+// Zugriffssteuerung für Zertifizierungsstufen
+model CertificationLevelAccess {
+  id        String           @id @default(cuid())
+  type      CourseAccessType // Nutze gleiche Enum wie CourseAccess
+  createdAt DateTime         @default(now())
+
+  levelId   String
+  level     CertificationLevel @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  groupId   String?
+  group     UserGroup?       @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  userId    String?
+
+  @@unique([levelId, type, groupId, userId])
+}
+
+// Erreichte Zertifizierungsstufen der Benutzer
+model UserCertificationLevel {
+  id              String    @id @default(cuid())
+  achievedAt      DateTime  @default(now())
+  expiresAt       DateTime? // Ablaufdatum basierend auf certificateExpiryType der Stufe
+  isValid         Boolean   @default(true)
+
+  // Zertifikat-Daten
+  certificateNumber String?  @unique
+  pdfData           Bytes?   // PDF des Stufenzertifikats
+
+  userId    String
+  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  levelId   String
+  level     CertificationLevel @relation(fields: [levelId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, levelId])
+}
