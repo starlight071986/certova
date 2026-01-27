@@ -193,7 +193,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     const settings = await db.appSettings.findUnique({
       where: { id: 'default' },
     })
-    const prefix = settings?.courseNumberPrefix || 'LH'
+    const prefix = settings?.courseNumberPrefix || 'CV'
     const year = new Date().getFullYear()
 
     const lastLevel = await db.userCertificationLevel.findFirst({

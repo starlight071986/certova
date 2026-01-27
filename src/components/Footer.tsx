@@ -50,7 +50,7 @@ export default function Footer() {
               </Link>
             )}
             {!settings?.privacyPolicyUrl && !settings?.imprintUrl && (
-              <span className="text-secondary-400">LearnHub LMS</span>
+              <span className="text-secondary-400">Certova LMS</span>
             )}
           </div>
 
@@ -58,7 +58,7 @@ export default function Footer() {
           <div className="flex items-center gap-2">
             <span className="text-secondary-400">Version</span>
             <Link
-              href="https://github.com/IHR-USERNAME/learnhub/releases"
+              href="https://github.com/IHR-USERNAME/certova/releases"
               target="_blank"
               rel="noopener noreferrer"
               className="font-mono font-medium text-secondary-600 hover:text-primary-600 transition-colors"

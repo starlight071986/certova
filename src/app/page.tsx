@@ -9,10 +9,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">LH</span>
+              <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center p-1">
+                <img src="/assets/certova-icon.svg" alt="Certova Logo" className="w-full h-full" />
               </div>
-              <span className="text-xl font-bold text-primary-900">LearnHub</span>
+              <span className="text-xl font-bold text-primary-900">Certova</span>
             </div>
             <div className="flex items-center gap-4">
               <Link
@@ -119,13 +119,13 @@ export default function Home() {
       <footer className="py-8 px-4 bg-secondary-900 text-secondary-400">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-primary-600 rounded flex items-center justify-center">
-              <span className="text-white font-bold text-xs">LH</span>
+            <div className="w-6 h-6 bg-primary-600 rounded flex items-center justify-center p-0.5">
+              <img src="/assets/certova-icon.svg" alt="Certova" className="w-full h-full" />
             </div>
-            <span className="text-white font-semibold">LearnHub</span>
+            <span className="text-white font-semibold">Certova</span>
           </div>
           <p className="text-sm">
-            © 2025 LearnHub. Ein Produkt der Alamos GmbH.
+            © 2025 Certova. Ein Produkt der Alamos GmbH.
           </p>
         </div>
       </footer>

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-LearnHub is a Learning Management System (LMS) built with Next.js 14, Prisma, NextAuth, and PostgreSQL. It supports multi-role user management (Admin, Instructor, Learner, Reviewer), course creation with modules and lessons, quiz systems, certificates with expiry tracking, and a credit-based enrollment system.
+Certova is a Learning Management System (LMS) built with Next.js 14, Prisma, NextAuth, and PostgreSQL. It supports multi-role user management (Admin, Instructor, Learner, Reviewer), course creation with modules and lessons, quiz systems, certificates with expiry tracking, and a credit-based enrollment system.
 
 ## Development Commands
 
@@ -29,9 +29,9 @@ npm run lint                 # Run ESLint
 
 ### Test Accounts (after seeding)
 All test users have password: `Test1234!`
-- Admin: `admin@learnhub.local`
-- Instructor: `trainer@learnhub.local`
-- Learner: `user@learnhub.local`
+- Admin: `admin@certova.local`
+- Instructor: `trainer@certova.local`
+- Learner: `user@certova.local`
 
 ## Architecture Overview
 
@@ -122,7 +122,7 @@ All test users have password: `Test1234!`
 
 **Environment Variables** (`.env.example`):
 ```
-DATABASE_URL=postgresql://postgres:postgres@db:5432/learnhub
+DATABASE_URL=postgresql://postgres:postgres@db:5432/certova
 NEXTAUTH_SECRET=<random-secret>
 NEXTAUTH_URL=http://localhost:3000
 ```

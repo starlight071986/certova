@@ -2,7 +2,7 @@ import { db } from './db'
 
 /**
  * Generates a unique course number in the format: PREFIX-YEAR-NUMBER
- * Example: LH-2026-00001
+ * Example: CV-2026-00001
  */
 export async function generateCourseNumber(): Promise<string> {
   // Get the course number prefix from app settings
@@ -11,7 +11,7 @@ export async function generateCourseNumber(): Promise<string> {
     select: { courseNumberPrefix: true },
   })
 
-  const prefix = settings?.courseNumberPrefix || 'LH'
+  const prefix = settings?.courseNumberPrefix || 'CV'
   const year = new Date().getFullYear()
 
   // Find the highest course number for this year

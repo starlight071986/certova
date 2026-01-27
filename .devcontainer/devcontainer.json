@@ -1,5 +1,5 @@
 {
-  "name": "LearnHub",
+  "name": "Certova",
   "dockerComposeFile": "docker-compose.yml",
   "service": "app",
   "workspaceFolder": "/workspace",

@@ -353,7 +353,7 @@ export function generateLevelCertificateHTML(data: LevelCertificateData): string
         ${
           data.logoUrl
             ? `<img src="${data.logoUrl}" alt="Logo" class="logo">`
-            : `<div class="header-title">${data.siteTitle || 'LearnHub'}</div>`
+            : `<div class="header-title">${data.siteTitle || 'Certova'}</div>`
         }
       </div>
       <div class="header-info">

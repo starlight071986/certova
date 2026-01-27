@@ -148,7 +148,7 @@ export async function exportToPDF(title: string, data: any, reportType: string) 
               hour: '2-digit',
               minute: '2-digit',
             })}</p>
-            <p>LearnHub - Learning Management System</p>
+            <p>Certova - Learning Management System</p>
           </div>
         </body>
       </html>

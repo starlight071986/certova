@@ -285,7 +285,7 @@ export function generateCertificateHTML(data: CertificateData): string {
             : `<div class="logo-fallback">${(data.siteTitle || 'LH').substring(0, 2).toUpperCase()}</div>`
         }
         <div class="organization-info">
-          <div class="organization-name">${data.siteTitle || 'LearnHub'}</div>
+          <div class="organization-name">${data.siteTitle || 'Certova'}</div>
           <div class="organization-subtitle">Learning Management System</div>
         </div>
       </div>
@@ -323,7 +323,7 @@ export function generateCertificateHTML(data: CertificateData): string {
     <!-- Footer mit Datum -->
     <div class="footer">
       <div class="date-location" style="width: 100%; text-align: center;">
-        ${data.organizationName || data.siteTitle || 'LearnHub'}, ${formattedDateLong}
+        ${data.organizationName || data.siteTitle || 'Certova'}, ${formattedDateLong}
       </div>
     </div>
 

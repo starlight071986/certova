@@ -1,4 +1,4 @@
-// UI Component Library - LearnHub
+// UI Component Library - Certova
 // Inspired by Alamos GmbH Design Language
 
 // Button

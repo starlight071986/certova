@@ -92,8 +92,8 @@ export default function SettingsPage() {
   // App Settings
   const [settings, setSettings] = useState<AppSettings | null>(null)
   const [publicUrl, setPublicUrl] = useState('')
-  const [coursePrefix, setCoursePrefix] = useState('LH')
-  const [siteTitle, setSiteTitle] = useState('LearnHub')
+  const [coursePrefix, setCoursePrefix] = useState('CV')
+  const [siteTitle, setSiteTitle] = useState('Certova')
   const [privacyUrl, setPrivacyUrl] = useState('')
   const [imprintUrl, setImprintUrl] = useState('')
   const [uploading, setUploading] = useState(false)
@@ -129,8 +129,8 @@ export default function SettingsPage() {
         const data = await settingsRes.json()
         setSettings(data)
         setPublicUrl(data.publicUrl || '')
-        setCoursePrefix(data.courseNumberPrefix || 'LH')
-        setSiteTitle(data.siteTitle || 'LearnHub')
+        setCoursePrefix(data.courseNumberPrefix || 'CV')
+        setSiteTitle(data.siteTitle || 'Certova')
         setPrivacyUrl(data.privacyPolicyUrl || '')
         setImprintUrl(data.imprintUrl || '')
       }
@@ -472,7 +472,7 @@ export default function SettingsPage() {
               <Input
                 value={siteTitle}
                 onChange={(e) => setSiteTitle(e.target.value)}
-                placeholder="LearnHub"
+                placeholder="Certova"
                 className="max-w-md"
               />
               <p className="text-xs text-secondary-500 mt-1">
@@ -635,7 +635,7 @@ export default function SettingsPage() {
                 <Input
                   value={coursePrefix}
                   onChange={(e) => setCoursePrefix(e.target.value.toUpperCase())}
-                  placeholder="LH"
+                  placeholder="CV"
                   className="w-24"
                   maxLength={5}
                 />

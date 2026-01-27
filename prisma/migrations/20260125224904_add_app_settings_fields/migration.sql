@@ -10,4 +10,4 @@ ADD COLUMN     "courseNumberPrefix" TEXT NOT NULL DEFAULT 'LH',
 ADD COLUMN     "imprintUrl" TEXT,
 ADD COLUMN     "logoUrl" TEXT,
 ADD COLUMN     "privacyPolicyUrl" TEXT,
-ADD COLUMN     "siteTitle" TEXT NOT NULL DEFAULT 'LearnHub';
+ADD COLUMN     "siteTitle" TEXT NOT NULL DEFAULT 'Certova';

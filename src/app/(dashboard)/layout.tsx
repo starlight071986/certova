@@ -155,22 +155,15 @@ export default function DashboardLayout({
       <Sidebar collapsed={!sidebarOpen} width="md">
         <SidebarHeader>
           <Link href="/dashboard" className="flex items-center gap-2">
-            {appSettings?.logoUrl ? (
-              <img
-                src={appSettings.logoUrl}
-                alt="Logo"
-                className="w-8 h-8 object-contain flex-shrink-0"
-              />
-            ) : (
-              <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                <span className="text-white font-bold text-sm">
-                  {(appSettings?.siteTitle || 'LH').substring(0, 2).toUpperCase()}
-                </span>
-              </div>
-            )}
+            <img
+              src={appSettings?.logoUrl || '/assets/certova-logo.svg'}
+              alt={appSettings?.siteTitle || 'Certova'}
+              className="h-8 object-contain flex-shrink-0"
+              style={{ maxWidth: sidebarOpen ? '160px' : '32px' }}
+            />
             {sidebarOpen && (
               <span className="text-lg font-bold text-primary-900">
-                {appSettings?.siteTitle || 'LearnHub'}
+                {appSettings?.siteTitle || 'Certova'}
               </span>
             )}
           </Link>

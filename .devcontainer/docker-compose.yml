@@ -9,7 +9,7 @@ services:
       - ..:/workspace:cached
     command: sleep infinity
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/learnhub
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/certova
       - NEXTAUTH_SECRET=dev-secret-change-in-production
       - NEXTAUTH_URL=http://localhost:3000
     depends_on:
@@ -23,7 +23,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=learnhub
+      - POSTGRES_DB=certova
 
 volumes:
   postgres-data:

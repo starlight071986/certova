@@ -423,7 +423,7 @@ model AppSettings {
   id                      String   @id @default("default")
   publicUrl               String?  // Öffentliche URL der Anwendung (z.B. https://ihr-lms.de)
   courseNumberPrefix      String   @default("LH")  // Prefix für Kursnummern
-  siteTitle               String   @default("LearnHub")
+  siteTitle               String   @default("Certova")
   logoUrl                 String?  // URL zum hochgeladenen Logo
   faviconUrl              String?  // URL zum hochgeladenen Favicon
   privacyPolicyUrl        String?  // Link zu Datenschutzhinweisen

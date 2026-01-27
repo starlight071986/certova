@@ -1,10 +1,10 @@
 # Versionierungs-Richtlinien
 
-Dieses Dokument beschreibt die Versionierungsstrategie für LearnHub LMS.
+Dieses Dokument beschreibt die Versionierungsstrategie für Certova LMS.
 
 ## Semantic Versioning
 
-LearnHub folgt [Semantic Versioning 2.0.0](https://semver.org/lang/de/).
+Certova folgt [Semantic Versioning 2.0.0](https://semver.org/lang/de/).
 
 Format: **MAJOR.MINOR.PATCH** (z.B. 1.2.3)
 
@@ -156,7 +156,7 @@ Frage: Bricht die Änderung bestehende Funktionalität?
    │  └─ NEIN → PATCH (Bug Fix / Verbesserung)
 ```
 
-## Beispiele aus LearnHub
+## Beispiele aus Certova
 
 ### MAJOR (Breaking Changes)
 - ❌ Umbenennung von `Lesson.type` zu `Lesson.contentType`

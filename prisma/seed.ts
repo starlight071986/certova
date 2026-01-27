@@ -23,10 +23,10 @@ async function main() {
 
   // Create Admin
   const admin = await prisma.user.upsert({
-    where: { email: 'admin@learnhub.local' },
+    where: { email: 'admin@certova.local' },
     update: {},
     create: {
-      email: 'admin@learnhub.local',
+      email: 'admin@certova.local',
       name: 'Max Admin',
       passwordHash,
       role: Role.ADMIN,
@@ -37,10 +37,10 @@ async function main() {
 
   // Create Instructor
   const instructor = await prisma.user.upsert({
-    where: { email: 'trainer@learnhub.local' },
+    where: { email: 'trainer@certova.local' },
     update: {},
     create: {
-      email: 'trainer@learnhub.local',
+      email: 'trainer@certova.local',
       name: 'Lisa Trainer',
       passwordHash,
       role: Role.INSTRUCTOR,
@@ -51,10 +51,10 @@ async function main() {
 
   // Create Learner
   const learner = await prisma.user.upsert({
-    where: { email: 'user@learnhub.local' },
+    where: { email: 'user@certova.local' },
     update: {},
     create: {
-      email: 'user@learnhub.local',
+      email: 'user@certova.local',
       name: 'Tom Teilnehmer',
       passwordHash,
       role: Role.LEARNER,
@@ -463,9 +463,9 @@ async function main() {
   console.log('🎉 Seeding complete!')
   console.log('')
   console.log('📧 Test-Zugänge (Passwort: Test1234!):')
-  console.log('   Admin:    admin@learnhub.local')
-  console.log('   Trainer:  trainer@learnhub.local')
-  console.log('   User:     user@learnhub.local')
+  console.log('   Admin:    admin@certova.local')
+  console.log('   Trainer:  trainer@certova.local')
+  console.log('   User:     user@certova.local')
 }
 
 main()

@@ -66,4 +66,4 @@ und dieses Projekt folgt [Semantic Versioning](https://semver.org/lang/de/).
 - **Enrollment-Prüfung**: Strikte Zugriffskontrolle auf Kursinhalte
 - **Token-geschützte Dateien**: PowerPoint-Dateien nur mit gültigem Token zugänglich
 
-[1.0.0]: https://github.com/IHR-USERNAME/learnhub/releases/tag/v1.0.0
+[1.0.0]: https://github.com/IHR-USERNAME/certova/releases/tag/v1.0.0
