@@ -36,3 +36,6 @@ next-env.d.ts
 
 # uploads (user-generated content)
 public/uploads/
+
+# website (product presentation - local only)
+website/
